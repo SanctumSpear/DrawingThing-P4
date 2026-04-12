@@ -10,10 +10,8 @@ static const std::string PASSWORD    = "password123";
 
 int main(void) {
     try {
-
-    std::cout << "========================================\n";
     std::cout << "  StubMain -- Player: " << USERNAME << "\n";
-    std::cout << "========================================\n\n";
+   
 
     Client client(SERVER_IP, SERVER_PORT);
     std::cout << "Connected to server at "
@@ -71,9 +69,7 @@ int main(void) {
                   << (int)next.header.sessionID << " is over.\n";
     }
 
-    std::cout << "\n========================================\n";
     std::cout << "  Stub complete for " << USERNAME << ".\n";
-    std::cout << "========================================\n";
 
     client.Cleanup();
 
