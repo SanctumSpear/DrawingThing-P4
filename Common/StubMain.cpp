@@ -3,94 +3,85 @@
 #include "../Client/client.h"
 #include "../Common/Packet.h"
 
-// StubMain acts as the CLIENT side of the game.
-// Run ServerMain first, then run this -- it connects to
-// the server and drives the full packet exchange.
+static const std::string SERVER_IP   = "127.0.0.1";
+static const int         SERVER_PORT = 54000;
+static const std::string USERNAME    = "Alice";      
+static const std::string PASSWORD    = "password123";
 
 int main(void) {
+    try {
 
     std::cout << "========================================\n";
-    std::cout << "  StubMain -- Client-Side Game Test\n";
+    std::cout << "  StubMain -- Player: " << USERNAME << "\n";
     std::cout << "========================================\n\n";
 
-    // Connect to the local server
-    Client client("127.0.0.1", 54000);
-    std::cout << "Connected to server.\n\n";
+    Client client(SERVER_IP, SERVER_PORT);
+    std::cout << "Connected to server at "
+              << SERVER_IP << ":" << SERVER_PORT << "\n\n";
 
-    // --------------------------------------------------
-    // Phase 1: Send player join strings
-    // Format: "<id><name>" e.g. "1Alice"
-    // Server expects 3 players before starting the game.
-    // --------------------------------------------------
-    std::cout << "--- Phase: Players Joining ---\n";
 
-    std::string joinRequests[] = { "1Alice", "2Bob", "3Joe" };
+    std::cout << "--- Phase: Authentication ---\n";
+    bool authed = client.Authenticate(USERNAME, PASSWORD);
 
-    for (const auto& entry : joinRequests) {
-        std::cout << "Sending join: " << entry << "\n";
-        client.SendString(entry);
-
-        // Wait for the server's ACK confirming the player joined
-        Packet ack = client.ReceivePacket();
-        if (ack.header.type == PacketType::ACK) {
-            std::cout << "  ACK received for " << entry.substr(1) << "\n";
-        }
+    if (!authed) {
+        std::cerr << "Authentication failed for \"" << USERNAME << "\".\n";
+        client.Cleanup();
+        return 1;
     }
+    std::cout << "Authenticated as " << USERNAME << ".\n\n";
 
-    std::cout << "\n";
-
-    // --------------------------------------------------
-    // Phase 2: Receive GAME_START from server
-    // --------------------------------------------------
-    std::cout << "--- Phase: Game Start ---\n";
-
+  
+    std::cout << "--- Phase: Waiting for Game Start ---\n";
     Packet startPkt = client.ReceivePacket();
     if (startPkt.header.type == PacketType::GAME_START) {
-        std::cout << "GAME_START received -- game is beginning!\n";
+        std::cout << "GAME_START received -- game is beginning!\n\n";
     }
 
-    std::cout << "\n";
 
-    // --------------------------------------------------
-    // Phase 3: Receive the drawing prompt
-    // --------------------------------------------------
-    std::cout << "--- Phase: Receiving Prompt ---\n";
+    std::cout << "--- Phase: Receiving Prompt (if drawer) ---\n";
+    Packet next = client.ReceivePacket();
 
-    Packet promptPkt = client.ReceivePacket();
-    if (promptPkt.header.type == PacketType::PROMPT) {
-        bool crcOk = promptPkt.ValidateCRC();
-        std::cout << "PROMPT received: \"" << promptPkt.GetPromptString() << "\"\n";
-        std::cout << "CRC valid: " << (crcOk ? "YES" : "NO") << "\n";
+    if (next.header.type == PacketType::PROMPT) {
+        bool crcOk = next.ValidateCRC();
+        std::cout << "PROMPT received: \"" << next.GetPromptString() << "\"\n";
+        std::cout << "CRC valid: " << (crcOk ? "YES" : "NO") << "\n\n";
+
+        std::cout << "--- Phase: ACK Prompt ---\n";
+        Packet ack = Packet::MakeAckPacket(next.header.sessionID,
+                                           next.header.dstAddress, 0);
+        client.SendPacket(ack);
+        std::cout << "ACK sent.\n\n";
+
+        std::cout << "--- Phase: Sending Image ---\n";
+        const char dummyImage[] = "DUMMY_JPEG_DATA";
+        Packet imgPkt = Packet::MakeImagePacket(
+            next.header.sessionID,
+            dummyImage, sizeof(dummyImage),
+            next.header.dstAddress, 0);
+        client.SendPacket(imgPkt);
+        std::cout << "IMAGE sent (" << sizeof(dummyImage) << " bytes).\n\n";
+
+        next = client.ReceivePacket();
     }
 
-    std::cout << "\n";
 
-    // --------------------------------------------------
-    // Phase 4: Send ACK back to confirm we got the prompt
-    // --------------------------------------------------
-    std::cout << "--- Phase: Sending ACK ---\n";
-
-    Packet ackOut = Packet::MakeAckPacket(promptPkt.header.sessionID);
-    client.SendPacket(ackOut);
-    std::cout << "ACK sent to server.\n\n";
-
-    // --------------------------------------------------
-    // Phase 5: Wait for GAME_END
-    // (In a real client, the IMAGE packet and guesses
-    //  would happen here before the server ends the round.)
-    // --------------------------------------------------
-    std::cout << "--- Phase: Waiting for Game End ---\n";
-
-    Packet endPkt = client.ReceivePacket();
-    if (endPkt.header.type == PacketType::GAME_END) {
+    std::cout << "--- Phase: Game End ---\n";
+    if (next.header.type == PacketType::GAME_END) {
         std::cout << "GAME_END received -- session "
-                  << (int)endPkt.header.sessionID << " is over.\n";
+                  << (int)next.header.sessionID << " is over.\n";
     }
 
     std::cout << "\n========================================\n";
-    std::cout << "  Stub complete.\n";
+    std::cout << "  Stub complete for " << USERNAME << ".\n";
     std::cout << "========================================\n";
 
     client.Cleanup();
+
+    } catch (const std::exception& e) {
+        std::cerr << "\n[ERROR] " << e.what() << "\n";
+        std::cerr << "Make sure ServerMain is running before starting StubMain.\n";
+        return 1;
+    }
+
     return 0;
 }

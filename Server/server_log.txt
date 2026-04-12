@@ -1,0 +1,5 @@
+[Sat Apr 11 23:33:18 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sat Apr 11 23:33:18 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sat Apr 11 23:33:24 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sat Apr 11 23:33:24 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sat Apr 11 23:33:24 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice

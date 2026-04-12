@@ -1,111 +1,158 @@
 #include <iostream>
 #include <string>
 #include "Communication.h"
+#include "AccountManager.h"
 #include "../Common/Game.h"
 #include "../Common/Packet.h"
+#include "../Common/logger.h"
+
+static void EnterState(Game& game, GameState s, Logger& log) {
+    game.ChangeState(s);
+    std::string name;
+    switch (s) {
+        case GameState::STARTUP:   name = "STARTUP";   break;
+        case GameState::WAITING:   name = "WAITING";   break;
+        case GameState::SENDING:   name = "SENDING";   break;
+        case GameState::RECEIVING: name = "RECEIVING"; break;
+        case GameState::ENDING:    name = "ENDING";    break;
+    }
+    std::cout << "[STATE] -> " << name << "\n";
+    log.Log(SC_XSTATE, game.GetSessionID(), true, name);
+}
 
 int main(void) {
 
-    Server server(54000);
+    const int MAX_PLAYERS = 3;
+    const int SESSION_ID  = 1;
+
+    Logger         log("server_log.txt");
+    AccountManager accounts("accounts.txt");
+    Server         server(54000);
+    Game           game((uint8_t)SESSION_ID);
+
     std::cout << "Server listening on port 54000...\n";
 
-    // Accept one client connection (the stub / real client)
-    server.AcceptClient();
-    std::cout << "Client connected.\n\n";
+    EnterState(game, GameState::STARTUP, log);
 
-    // Session ID 1 -- matches what StubMain uses
-    Game game(1);
+    EnterState(game, GameState::WAITING, log);
+    std::cout << "Waiting for " << MAX_PLAYERS << " players...\n\n";
 
-    // --------------------------------------------------
-    // Phase 1: Wait for players to join
-    // Players send a raw string in the format "<id><name>"
-    // e.g. "1Alice", "2Bob", "3Joe"
-    // The server adds them to the game until 3 have joined.
-    // --------------------------------------------------
-    std::cout << "--- Phase: Players Joining ---\n";
-    game.ChangeState(GameState::WAITING);
+    while (game.GetPlayerCount() < MAX_PLAYERS) {
 
-    const int MAX_PLAYERS = 3;
+        // Block until the next TCP connection arrives
+        int sockIdx = server.AcceptClient();
+        std::cout << "Connection accepted (socket " << sockIdx << ").\n";
+        log.Log(SC_CONNECT, game.GetSessionID(), true,
+                "socket " + std::to_string(sockIdx));
 
-    while (game.GetChangeState() == GameState::WAITING) {
-        std::string playerJoin = server.ReceiveString();
+        // Client sends credentials as "username:password"
+        std::string credentials = server.ReceiveString(sockIdx);
+        log.Log(SR_RECV, game.GetSessionID(), true,
+                "credentials from socket " + std::to_string(sockIdx));
 
-        if (playerJoin.empty()) continue;
-
-        int         playerId   = playerJoin[0] - '0';
-        std::string playerName = playerJoin.substr(1);
-
-        game.AddPlayer(playerName, playerId);
-
-        // Send an ACK so the client knows the join was accepted
-        Packet ack = Packet::MakeAckPacket((uint8_t)game.GetSessionID());
-        server.SendPacket(ack);
-
-        if (game.GetPlayerCount() == MAX_PLAYERS) {
-            game.ChangeState(GameState::SENDING);
+        auto colonPos = credentials.find(':');
+        if (colonPos == std::string::npos) {
+            // Malformed — reject
+            Packet err = Packet::MakeErrorPacket(
+                game.GetSessionID(), "Bad credentials format", 0, (uint8_t)(sockIdx + 1));
+            server.SendPacket(sockIdx, err);
+            log.Log(SL_LOGIN, game.GetSessionID(), false, "malformed credentials");
+            server.CloseClient(sockIdx);
+            continue;
         }
+
+        std::string username = credentials.substr(0, colonPos);
+        std::string password = credentials.substr(colonPos + 1);
+
+        if (!accounts.Authenticate(username, password)) {
+            // Wrong credentials — reject and close socket
+            Packet err = Packet::MakeErrorPacket(
+                game.GetSessionID(), "Authentication failed", 0, (uint8_t)(sockIdx + 1));
+            server.SendPacket(sockIdx, err);
+            std::cout << "  Auth FAILED for \"" << username << "\"\n";
+            log.Log(SL_LOGIN, game.GetSessionID(), false, username);
+            server.CloseClient(sockIdx);
+            continue;
+        }
+
+        // Auth passed — assign a game player ID (1-based)
+        int playerId = game.GetPlayerCount() + 1;
+        game.AddPlayer(username, playerId, sockIdx);
+
+        // ACK: src=server(0), dst=this player
+        Packet ack = Packet::MakeAckPacket(
+            game.GetSessionID(), 0, (uint8_t)playerId);
+        server.SendPacket(sockIdx, ack);
+
+        std::cout << "  Auth OK: " << username
+                  << " -> Player " << playerId << "\n\n";
+        log.Log(SL_LOGIN, game.GetSessionID(), true, username);
     }
 
     game.PrintPlayers();
     std::cout << "\n";
 
-    // --------------------------------------------------
-    // Phase 2: Start the game -- broadcast GAME_START
-    // --------------------------------------------------
-    std::cout << "--- Phase: Game Start ---\n";
+    EnterState(game, GameState::SENDING, log);
 
-    Packet startPkt = Packet::MakeGameStartPacket((uint8_t)game.GetSessionID());
-    server.SendPacket(startPkt);
-    std::cout << "GAME_START sent.\n\n";
+    // Broadcast GAME_START to every player (src=server, dst=broadcast)
+    Packet startPkt = Packet::MakeGameStartPacket(game.GetSessionID(), 0, 0);
+    server.BroadcastPacket(startPkt);
+    std::cout << "GAME_START broadcast.\n";
+    log.Log(SS_SEND, game.GetSessionID(), true, "GAME_START broadcast");
 
-    // --------------------------------------------------
-    // Phase 3: Send a drawing prompt to the current drawer
-    // --------------------------------------------------
-    std::cout << "--- Phase: Sending Prompt ---\n";
-
+    // Send drawing prompt to the current drawer only
     game.SetPrompt("A cat riding a bicycle");
-    std::cout << "Drawer: " << game.GetCurrentDrawer().GetName() << "\n";
+    const Player& drawer = game.GetCurrentDrawer();
 
     Packet promptPkt = Packet::MakePromptPacket(
-        (uint8_t)game.GetSessionID(), game.GetPrompt());
-    server.SendPacket(promptPkt);
-    std::cout << "PROMPT sent: \"" << game.GetPrompt() << "\"\n\n";
+        game.GetSessionID(), game.GetPrompt(),
+        0, (uint8_t)drawer.GetId());
 
-    // --------------------------------------------------
-    // Phase 4: Wait for ACK from the drawer
-    // --------------------------------------------------
-    std::cout << "--- Phase: Waiting for ACK ---\n";
+    server.SendPacket(drawer.GetSocketIndex(), promptPkt);
+    std::cout << "PROMPT sent to " << drawer.GetName()
+              << ": \"" << game.GetPrompt() << "\"\n";
+    log.Log(SS_PRMT, game.GetSessionID(), true,
+            "prompt to " + drawer.GetName());
 
-    Packet ackIn = server.ReceivePacket();
-    if (ackIn.header.type == PacketType::ACK) {
-        std::cout << "ACK received from drawer.\n\n";
+    EnterState(game, GameState::WAITING, log);
+
+    Packet drawerAck = server.ReceivePacket(drawer.GetSocketIndex());
+    if (drawerAck.header.type == PacketType::ACK) {
+        std::cout << "Drawer ACK received from " << drawer.GetName() << ".\n";
+        log.Log(SR_RECV, game.GetSessionID(), true,
+                "ACK from " + drawer.GetName());
     }
 
-    // --------------------------------------------------
-    // Phase 5: Simulate guessing round -- award points
-    // (In the real game, IMAGE packets would come in here
-    // and players would submit guesses.)
-    // --------------------------------------------------
-    std::cout << "--- Phase: Awarding Points ---\n";
+    EnterState(game, GameState::RECEIVING, log);
+    std::cout << "Waiting for image from " << drawer.GetName() << "...\n";
 
-    game.ChangeState(GameState::RECEIVING);
-    game.AwardPoints(2, 100); // Bob guessed correctly first
-    game.AwardPoints(3, 50);  // Joe guessed second
+    Packet imgPkt = server.ReceivePacket(drawer.GetSocketIndex());
+    if (imgPkt.header.type == PacketType::IMAGE) {
+        bool crcOk = imgPkt.ValidateCRC();
+        std::cout << "IMAGE received (" << imgPkt.header.payloadSize
+                  << " bytes, CRC " << (crcOk ? "OK" : "FAIL") << ").\n";
+        log.Log(SR_JPEG, game.GetSessionID(), crcOk,
+                std::to_string(imgPkt.header.payloadSize) + " bytes");
+    }
 
+    // Award placeholder points (real game would evaluate guesses here)
+    game.AwardPoints(2, 100);
+    game.AwardPoints(3, 50);
     game.PrintPlayers();
     std::cout << "\n";
 
-    // --------------------------------------------------
-    // Phase 6: End the game -- send GAME_END
-    // --------------------------------------------------
-    std::cout << "--- Phase: Game End ---\n";
+    EnterState(game, GameState::ENDING, log);
 
-    game.ChangeState(GameState::ENDING);
-    Packet endPkt = Packet::MakeGameEndPacket((uint8_t)game.GetSessionID());
-    server.SendPacket(endPkt);
-    std::cout << "GAME_END sent.\n";
+    Packet endPkt = Packet::MakeGameEndPacket(game.GetSessionID(), 0, 0);
+    server.BroadcastPacket(endPkt);
+    std::cout << "GAME_END broadcast.\n";
+    log.Log(SS_SEND, game.GetSessionID(), true, "GAME_END broadcast");
 
     game.ChangeProgramRunning(false);
+
+    for (int i = 0; i < game.GetPlayerCount(); i++)
+        log.Log(SC_DISCONNECT, game.GetSessionID(), true,
+                game.GetPlayer(i).GetName());
 
     std::cout << "\nGame session ended.\n";
     server.Cleanup();
