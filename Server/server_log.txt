@@ -114,3 +114,49 @@
 [Sun Apr 12 18:08:09 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
 [Sun Apr 12 18:08:09 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
 [Sun Apr 12 18:08:09 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 18:42:31 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 18:42:31 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 18:43:33 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 18:43:33 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 18:43:33 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 18:43:34 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 18:50:56 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 18:50:56 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:51:07 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 18:51:07 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 18:51:07 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 1
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 1
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SL_LOGIN : Login: Bob
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Bob
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Bob
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Bob
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Bob
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SR_RECV : Server received data | Alice voted for player 2
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SR_RECV : Server received data | Bob voted for player 1
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SS_SEND : Server sent data | awarded 100 pts to player 1
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SS_SEND : Server sent data | RESULTS broadcast
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Bob
