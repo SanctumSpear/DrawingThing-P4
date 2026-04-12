@@ -53,6 +53,19 @@ public:
         return std::string(buf);
     }
 
+    // Receive exactly 'len' bytes into 'buf', looping until complete.
+    // TCP is a stream — a single recv() may return fewer bytes than requested.
+    // Returns false if the connection was closed or errored mid-stream.
+    bool RecvAll(char* buf, int len) {
+        int total = 0;
+        while (total < len) {
+            int r = recv(serverSocket, buf + total, len - total, 0);
+            if (r <= 0) return false;
+            total += r;
+        }
+        return true;
+    }
+
     void SendPacket(const Packet& packet) {
         uint32_t totalSize = 0;
         char* buf = packet.Serialize(totalSize);
@@ -61,22 +74,23 @@ public:
         delete[] buf;
     }
 
-  
     Packet ReceivePacket() {
+        // Step 1: read the 4-byte size prefix reliably
         uint32_t totalSize = 0;
-        int r = recv(serverSocket, (char*)&totalSize, sizeof(uint32_t), 0);
-        if (r <= 0)
-            throw std::runtime_error("ReceivePacket: connection closed or recv error on size prefix.");
-        if (totalSize == 0 || totalSize > 10 * 1024 * 1024) 
-            throw std::runtime_error("ReceivePacket: invalid packet size received (" + std::to_string(totalSize) + ").");
+        if (!RecvAll((char*)&totalSize, sizeof(uint32_t)))
+            throw std::runtime_error("ReceivePacket: connection closed reading size prefix.");
 
+        if (totalSize < sizeof(PacketHeader) || totalSize > 10 * 1024 * 1024)
+            throw std::runtime_error("ReceivePacket: invalid packet size (" + std::to_string(totalSize) + ").");
+
+        // Step 2: read the full packet payload reliably
         char* buf = new char[totalSize];
         ZeroMemory(buf, totalSize);
-        int received = recv(serverSocket, buf, (int)totalSize, 0);
-        if (received <= 0) {
+        if (!RecvAll(buf, (int)totalSize)) {
             delete[] buf;
-            throw std::runtime_error("ReceivePacket: connection closed or recv error on payload.");
+            throw std::runtime_error("ReceivePacket: connection closed reading payload.");
         }
+
         Packet p = Packet::Deserialize(buf, totalSize);
         delete[] buf;
         return p;
