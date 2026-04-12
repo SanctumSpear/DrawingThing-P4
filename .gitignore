@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Allow glfw3.dll in Graphics/bin
+!Graphics/bin/
+!Graphics/bin/glfw3.dll
