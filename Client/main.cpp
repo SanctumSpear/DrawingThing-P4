@@ -1,7 +1,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
+#include "canvas.h"
 #include "client.h"
+#include <iostream>
+
+
 
 //int main() {
 //    try {
@@ -26,23 +29,33 @@
 //    return 0;
 //}
 
+const int WIDTH = 800;
+const int HEIGHT = 600;
+
+// Global pointer so static callbacks can reach the Canvas
+Canvas* gCanvas = nullptr;
+
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+    if (gCanvas) gCanvas->OnMouseButton(button, action);
+}
+
+void cursorPosCallback(GLFWwindow* window, double mx, double my) {
+    if (gCanvas) gCanvas->OnMouseMove(mx, my);
+}
+
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (gCanvas) gCanvas->OnKeyPress(key, action);
+}
+
 int main() {
-    if (!glfwInit()) {
-        std::cerr << "GLFW init failed\n";
-        return -1;
-    }
+    if (!glfwInit()) return -1;
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Drawing Client", nullptr, nullptr);
-    if (!window) {
-        std::cerr << "Window creation failed\n";
-        glfwTerminate();
-        return -1;
-    }
-
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Drawing Client", nullptr, nullptr);
+    if (!window) { glfwTerminate(); return -1; }
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -50,15 +63,24 @@ int main() {
         return -1;
     }
 
-    std::cout << "OpenGL " << glGetString(GL_VERSION) << "\n";
+    Canvas canvas(WIDTH, HEIGHT);
+    gCanvas = &canvas;
+
+    glfwSetMouseButtonCallback(window, mouseButtonCallback);
+    glfwSetCursorPosCallback(window, cursorPosCallback);
+    glfwSetKeyCallback(window, keyCallback);
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        canvas.Draw();
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    gCanvas = nullptr;
     glfwTerminate();
     return 0;
 }
