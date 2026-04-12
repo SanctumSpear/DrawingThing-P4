@@ -22,7 +22,7 @@ static void EnterState(Game& game, GameState s, Logger& log) {
 
 int main(void) {
 
-    const int MAX_PLAYERS = 3;
+    const int MAX_PLAYERS = 1;
     const int SESSION_ID  = 1;
 
     Logger         log("server_log.txt");
