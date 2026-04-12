@@ -39,20 +39,17 @@ int main(void) {
 
     while (game.GetPlayerCount() < MAX_PLAYERS) {
 
-        // Block until the next TCP connection arrives
         int sockIdx = server.AcceptClient();
         std::cout << "Connection accepted (socket " << sockIdx << ").\n";
         log.Log(SC_CONNECT, game.GetSessionID(), true,
                 "socket " + std::to_string(sockIdx));
 
-        // Client sends credentials as "username:password"
         std::string credentials = server.ReceiveString(sockIdx);
         log.Log(SR_RECV, game.GetSessionID(), true,
                 "credentials from socket " + std::to_string(sockIdx));
 
         auto colonPos = credentials.find(':');
         if (colonPos == std::string::npos) {
-            // Malformed — reject
             Packet err = Packet::MakeErrorPacket(
                 game.GetSessionID(), "Bad credentials format", 0, (uint8_t)(sockIdx + 1));
             server.SendPacket(sockIdx, err);
@@ -65,7 +62,6 @@ int main(void) {
         std::string password = credentials.substr(colonPos + 1);
 
         if (!accounts.Authenticate(username, password)) {
-            // Wrong credentials — reject and close socket
             Packet err = Packet::MakeErrorPacket(
                 game.GetSessionID(), "Authentication failed", 0, (uint8_t)(sockIdx + 1));
             server.SendPacket(sockIdx, err);
@@ -75,11 +71,9 @@ int main(void) {
             continue;
         }
 
-        // Auth passed — assign a game player ID (1-based)
         int playerId = game.GetPlayerCount() + 1;
         game.AddPlayer(username, playerId, sockIdx);
 
-        // ACK: src=server(0), dst=this player
         Packet ack = Packet::MakeAckPacket(
             game.GetSessionID(), 0, (uint8_t)playerId);
         server.SendPacket(sockIdx, ack);
@@ -94,13 +88,11 @@ int main(void) {
 
     EnterState(game, GameState::SENDING, log);
 
-    // Broadcast GAME_START to every player (src=server, dst=broadcast)
     Packet startPkt = Packet::MakeGameStartPacket(game.GetSessionID(), 0, 0);
     server.BroadcastPacket(startPkt);
     std::cout << "GAME_START broadcast.\n";
     log.Log(SS_SEND, game.GetSessionID(), true, "GAME_START broadcast");
 
-    // Send drawing prompt to the current drawer only
     game.SetPrompt("A cat riding a bicycle");
     const Player& drawer = game.GetCurrentDrawer();
 
@@ -135,7 +127,6 @@ int main(void) {
                 std::to_string(imgPkt.header.payloadSize) + " bytes");
     }
 
-    // Award placeholder points (real game would evaluate guesses here)
     game.AwardPoints(2, 100);
     game.AwardPoints(3, 50);
     game.PrintPlayers();
