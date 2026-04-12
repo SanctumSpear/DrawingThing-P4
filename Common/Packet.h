@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 #include <iostream>
 #include <string>
 #include <cstdint>
@@ -13,7 +14,7 @@ enum class PacketType : uint8_t {
     GAME_START = 0x05,
     GAME_END = 0x06,
     ACK = 0x07,
-    ERROR = 0x08
+    GAME_ERROR = 0x08
 };
 
 enum class GameState : uint8_t {
@@ -76,7 +77,7 @@ public:
         packet.header.type = PacketType::PROMPT;
         packet.header.state = GameState::SENDING;
         packet.header.sessionID = sessionID;
-        packet.header.payloadSize = prompt.size() + 1;  
+        packet.header.payloadSize = prompt.size() + 1;
         packet.data = new char[packet.header.payloadSize];
 
         memcpy(packet.data, prompt.c_str(), packet.header.payloadSize);
@@ -125,7 +126,7 @@ public:
     static Packet MakeErrorPacket(uint8_t sessionID, const std::string& message) {
         Packet packet;
 
-        packet.header.type = PacketType::ERROR;
+        packet.header.type = PacketType::GAME_ERROR;
         packet.header.state = GameState::WAITING;
         packet.header.sessionID = sessionID;
         packet.header.payloadSize = message.size() + 1;
@@ -169,7 +170,7 @@ public:
 
 
     bool ValidateCRC() const {
-        if (header.payloadSize == 0) return true;  
+        if (header.payloadSize == 0) return true;
         return ComputeCRC(data, header.payloadSize) == header.CRC;
     }
 

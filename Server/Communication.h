@@ -3,17 +3,19 @@
 #include <iostream>
 #include <string>
 #include <WS2tcpip.h>
+#include "../Common/Game.h"
+#include "../Common/Packet.h"
 
 class Server {
 private:
-	WSADATA data;
-	SOCKET serverSocket;
-	SOCKET clientSocket;
+    WSADATA data;
+    SOCKET  serverSocket;
+    SOCKET  clientSocket;
 
 public:
 
-	//Initializes Winsock and creates server socket
-	Server(int port) {
+    // Initializes Winsock and creates server socket
+    Server(int port) {
         if (WSAStartup(MAKEWORD(2, 2), &data) != 0) {
             throw std::runtime_error("WSAStartup failed.");
         }
@@ -31,19 +33,19 @@ public:
 
         bind(serverSocket, (sockaddr*)&hint, sizeof(hint));
         listen(serverSocket, SOMAXCONN);
-	}
+    }
 
-	//Accepts a client connection
+    // Accepts a client connection
     void AcceptClient() {
         clientSocket = accept(serverSocket, nullptr, nullptr);
     }
 
-    //Sends a string to client
+    // Sends a raw string to the client
     void SendString(const std::string& message) {
-        send(clientSocket, message.c_str(), message.size() + 1, 0);
+        send(clientSocket, message.c_str(), (int)(message.size() + 1), 0);
     }
 
-    //Receive a string from client
+    // Receives a raw string from the client
     std::string ReceiveString() {
         char buffer[512];
         ZeroMemory(buffer, 512);
@@ -51,7 +53,36 @@ public:
         return std::string(buffer);
     }
 
-    //Closes server, sockets, and cleans up Winsock
+    // Serializes a Packet and sends it over the socket.
+    // Sends the total byte size first (4 bytes) so the receiver
+    // knows how much to read, then sends the raw packet bytes.
+    void SendPacket(const Packet& packet) {
+        uint32_t totalSize = 0;
+        char* buffer = packet.Serialize(totalSize);
+
+        // Send size header so receiver can allocate the right buffer
+        send(clientSocket, (char*)&totalSize, sizeof(uint32_t), 0);
+        send(clientSocket, buffer, (int)totalSize, 0);
+
+        delete[] buffer;
+    }
+
+    // Reads the size prefix, then the packet bytes, and deserializes
+    // them back into a Packet object.
+    Packet ReceivePacket() {
+        uint32_t totalSize = 0;
+        recv(clientSocket, (char*)&totalSize, sizeof(uint32_t), 0);
+
+        char* buffer = new char[totalSize];
+        ZeroMemory(buffer, totalSize);
+        recv(clientSocket, buffer, (int)totalSize, 0);
+
+        Packet packet = Packet::Deserialize(buffer, totalSize);
+        delete[] buffer;
+        return packet;
+    }
+
+    // Closes both sockets and shuts down Winsock
     void Cleanup() {
         closesocket(clientSocket);
         closesocket(serverSocket);

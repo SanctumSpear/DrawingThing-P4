@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <WS2tcpip.h>
+#include "../Common/Packet.h"
 
 class Client {
 private:
@@ -45,6 +46,34 @@ public:
         ZeroMemory(buffer, 512);
         recv(serverSocket, buffer, 512, 0);
         return std::string(buffer);
+    }
+
+    // Serializes a Packet and sends it to the server.
+    // Sends total byte size first (4 bytes) so the server
+    // knows how much to read, then sends the raw packet bytes.
+    void SendPacket(const Packet& packet) {
+        uint32_t totalSize = 0;
+        char* buffer = packet.Serialize(totalSize);
+
+        send(serverSocket, (char*)&totalSize, sizeof(uint32_t), 0);
+        send(serverSocket, buffer, (int)totalSize, 0);
+
+        delete[] buffer;
+    }
+
+    // Reads the size prefix then the packet bytes and
+    // deserializes them back into a Packet object.
+    Packet ReceivePacket() {
+        uint32_t totalSize = 0;
+        recv(serverSocket, (char*)&totalSize, sizeof(uint32_t), 0);
+
+        char* buffer = new char[totalSize];
+        ZeroMemory(buffer, totalSize);
+        recv(serverSocket, buffer, (int)totalSize, 0);
+
+        Packet packet = Packet::Deserialize(buffer, totalSize);
+        delete[] buffer;
+        return packet;
     }
 
     // Closes the socket and cleans up Winsock
