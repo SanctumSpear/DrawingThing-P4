@@ -16,6 +16,11 @@
 #include <QFont>
 #include <QMessageBox>
 #include <QString>
+#include <QStackedWidget>
+#include <QScrollArea>
+#include <QImage>
+#include <QPixmap>
+#include <cstring>
 
 #include <iostream>
 #include <string>
@@ -260,6 +265,17 @@ void ServerWorker::runServer(int maxPlayers)
                 log.Log(SR_JPEG, game.GetSessionID(), crcOk,
                     std::to_string(imgPkt.header.payloadSize)
                     + " bytes from " + p.GetName());
+
+                // Forward raw GL_RGB pixels to the UI (800×600, bottom-to-top).
+                constexpr int IMG_W = 800, IMG_H = 600;
+                if ((int)imgPkt.header.payloadSize == IMG_W * IMG_H * 3)
+                {
+                    emit imageReceived(
+                        p.GetId(),
+                        QString::fromStdString(p.GetName()),
+                        QByteArray(imgPkt.data, (int)imgPkt.header.payloadSize),
+                        IMG_W, IMG_H);
+                }
             }
         }
 
@@ -451,7 +467,7 @@ MainWindow::~MainWindow()
 void MainWindow::setupUi()
 {
     setWindowTitle("Drawing Game Server");
-    resize(1100, 650);
+    resize(1100, 700);
 
     QWidget* centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
@@ -460,12 +476,13 @@ void MainWindow::setupUi()
     mainLayout->setContentsMargins(16, 16, 16, 16);
     mainLayout->setSpacing(12);
 
+    // ── Top bar: status labels + max players ──────────────────────────────────
     QHBoxLayout* topLayout = new QHBoxLayout();
 
     serverStatusLabel = new QLabel("Server: Ready");
-    gameStateLabel = new QLabel("State: IDLE");
-    maxPlayersLabel = new QLabel("Max Players:");
-    maxPlayersSpin = new QSpinBox();
+    gameStateLabel    = new QLabel("State: IDLE");
+    maxPlayersLabel   = new QLabel("Max Players:");
+    maxPlayersSpin    = new QSpinBox();
 
     maxPlayersSpin->setMinimum(1);
     maxPlayersSpin->setMaximum(8);
@@ -474,7 +491,6 @@ void MainWindow::setupUi()
     QFont statusFont;
     statusFont.setPointSize(11);
     statusFont.setBold(true);
-
     serverStatusLabel->setFont(statusFont);
     gameStateLabel->setFont(statusFont);
 
@@ -487,6 +503,7 @@ void MainWindow::setupUi()
 
     mainLayout->addLayout(topLayout);
 
+    // ── Middle: players list (left) + stacked log/image panel (right) ─────────
     QHBoxLayout* middleLayout = new QHBoxLayout();
     middleLayout->setSpacing(12);
 
@@ -495,29 +512,53 @@ void MainWindow::setupUi()
     playersList = new QListWidget();
     playersLayout->addWidget(playersList);
 
-    QGroupBox* logsBox = new QGroupBox("Server Output");
-    QVBoxLayout* logsLayout = new QVBoxLayout(logsBox);
+    // Right panel: QStackedWidget
+    //   Page 0 – plain-text server log
+    //   Page 1 – horizontally scrollable drawing gallery
+    logStack = new QStackedWidget();
+
     logsView = new QPlainTextEdit();
     logsView->setReadOnly(true);
-    logsLayout->addWidget(logsView);
+    logStack->addWidget(logsView);   // index 0
+
+    QScrollArea* imageScrollArea = new QScrollArea();
+    imageScrollArea->setWidgetResizable(true);
+    imageScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    imageScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    imageScrollArea->setStyleSheet("QScrollArea { background: #1e1e1e; }");
+
+    imageContainer = new QWidget();
+    imageContainer->setStyleSheet("background: #1e1e1e;");
+    imageScrollArea->setWidget(imageContainer);
+
+    logStack->addWidget(imageScrollArea);  // index 1
+
+    QGroupBox* rightBox = new QGroupBox("Server Output");
+    QVBoxLayout* rightLayout = new QVBoxLayout(rightBox);
+    rightLayout->addWidget(logStack);
 
     middleLayout->addWidget(playersBox, 1);
-    middleLayout->addWidget(logsBox, 2);
+    middleLayout->addWidget(rightBox,   2);
 
     mainLayout->addLayout(middleLayout);
 
+    // ── Bottom: buttons ────────────────────────────────────────────────────────
     QHBoxLayout* bottomLayout = new QHBoxLayout();
 
-    refreshLogsButton = new QPushButton("Refresh Log File");
-    startButton = new QPushButton("Start Server");
-    quitButton = new QPushButton("Quit");
+    refreshLogsButton   = new QPushButton("Refresh Log File");
+    viewDrawingsButton  = new QPushButton("View Drawings");
+    startButton         = new QPushButton("Start Server");
+    quitButton          = new QPushButton("Quit");
 
-    refreshLogsButton->setMinimumHeight(40);
-    startButton->setMinimumHeight(40);
-    quitButton->setMinimumHeight(40);
+    for (QPushButton* btn : { refreshLogsButton, viewDrawingsButton,
+                               startButton, quitButton })
+        btn->setMinimumHeight(40);
+
+    viewDrawingsButton->setEnabled(false);
 
     bottomLayout->addStretch();
     bottomLayout->addWidget(refreshLogsButton);
+    bottomLayout->addWidget(viewDrawingsButton);
     bottomLayout->addWidget(startButton);
     bottomLayout->addWidget(quitButton);
 
@@ -526,17 +567,20 @@ void MainWindow::setupUi()
 
 void MainWindow::setupConnections()
 {
-    connect(startButton, &QPushButton::clicked, this, &MainWindow::onStartClicked);
-    connect(refreshLogsButton, &QPushButton::clicked, this, &MainWindow::onRefreshLogsClicked);
-    connect(quitButton, &QPushButton::clicked, this, &MainWindow::close);
+    connect(startButton,        &QPushButton::clicked, this, &MainWindow::onStartClicked);
+    connect(refreshLogsButton,  &QPushButton::clicked, this, &MainWindow::onRefreshLogsClicked);
+    connect(viewDrawingsButton, &QPushButton::clicked, this, &MainWindow::onViewDrawingsClicked);
+    connect(quitButton,         &QPushButton::clicked, this, &MainWindow::close);
 
-    connect(worker, &ServerWorker::logMessage, this, &MainWindow::appendLog);
-    connect(worker, &ServerWorker::stateChanged, this, &MainWindow::setState);
-    connect(worker, &ServerWorker::playerJoined, this, &MainWindow::addPlayer);
+    connect(worker, &ServerWorker::logMessage,     this, &MainWindow::appendLog);
+    connect(worker, &ServerWorker::stateChanged,   this, &MainWindow::setState);
+    connect(worker, &ServerWorker::playerJoined,   this, &MainWindow::addPlayer);
     connect(worker, &ServerWorker::playerListCleared, this, &MainWindow::clearPlayers);
-    connect(worker, &ServerWorker::serverStarted, this, &MainWindow::onServerStarted);
-    connect(worker, &ServerWorker::serverStopped, this, &MainWindow::onServerStopped);
-    connect(worker, &ServerWorker::serverError, this, &MainWindow::onServerError);
+    connect(worker, &ServerWorker::serverStarted,  this, &MainWindow::onServerStarted);
+    connect(worker, &ServerWorker::serverStopped,  this, &MainWindow::onServerStopped);
+    connect(worker, &ServerWorker::serverError,    this, &MainWindow::onServerError);
+
+    connect(worker, &ServerWorker::imageReceived,  this, &MainWindow::storeImage);
 }
 
 void MainWindow::onStartClicked()
@@ -557,12 +601,19 @@ void MainWindow::onStartClicked()
 
 void MainWindow::onRefreshLogsClicked()
 {
+    logStack->setCurrentIndex(0);
+    viewDrawingsButton->setText("View Drawings");
     loadLogFile();
 }
 
 void MainWindow::onServerStarted()
 {
     serverStatusLabel->setText("Server: Running");
+
+    storedImages.clear();
+    viewDrawingsButton->setEnabled(false);
+    viewDrawingsButton->setText("View Drawings");
+    logStack->setCurrentIndex(0);
 }
 
 void MainWindow::onServerStopped()
@@ -597,6 +648,124 @@ void MainWindow::addPlayer(const QString& name)
 void MainWindow::clearPlayers()
 {
     playersList->clear();
+}
+
+// ── Image handling ─────────────────────────────────────────────────────────────
+
+void MainWindow::storeImage(int playerId, const QString& playerName,
+                             const QByteArray& pixels, int width, int height)
+{
+    if (pixels.size() != width * height * 3)
+    {
+        appendLog(QString("[WARN] Image from %1 has unexpected size (%2 bytes), skipping.")
+            .arg(playerName).arg(pixels.size()));
+        return;
+    }
+
+    // OpenGL stores rows bottom-to-top; flip vertically so Qt displays it upright.
+    QImage img(width, height, QImage::Format_RGB888);
+    const uchar* src = reinterpret_cast<const uchar*>(pixels.constData());
+    const int rowBytes = width * 3;
+    for (int y = 0; y < height; ++y)
+    {
+        const uchar* srcRow = src + (height - 1 - y) * rowBytes;
+        std::memcpy(img.scanLine(y), srcRow, rowBytes);
+    }
+
+    PlayerImage pi;
+    pi.id     = playerId;
+    pi.name   = playerName;
+    pi.pixmap = QPixmap::fromImage(img);
+    storedImages.append(pi);
+
+    viewDrawingsButton->setEnabled(true);
+    appendLog(QString("Drawing from %1 stored — click 'View Drawings' to see it.")
+        .arg(playerName));
+}
+
+void MainWindow::rebuildImagePanel()
+{
+    QLayout* old = imageContainer->layout();
+    if (old)
+    {
+        QLayoutItem* item;
+        while ((item = old->takeAt(0)) != nullptr)
+        {
+            if (item->widget())  item->widget()->deleteLater();
+            if (item->layout())  {
+                QLayoutItem* sub;
+                while ((sub = item->layout()->takeAt(0)) != nullptr) {
+                    if (sub->widget()) sub->widget()->deleteLater();
+                    delete sub;
+                }
+                delete item->layout();
+            }
+            delete item;
+        }
+        delete old;
+    }
+
+    QHBoxLayout* layout = new QHBoxLayout(imageContainer);
+    layout->setSpacing(20);
+    layout->setContentsMargins(16, 16, 16, 16);
+    layout->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+
+    if (storedImages.isEmpty())
+    {
+        QLabel* none = new QLabel("No drawings received yet.");
+        none->setAlignment(Qt::AlignCenter);
+        none->setStyleSheet("color: #aaa; font-size: 14px;");
+        layout->addWidget(none);
+    }
+    else
+    {
+        for (const PlayerImage& pi : storedImages)
+        {
+            QWidget* card = new QWidget();
+            card->setStyleSheet(
+                "background: #2d2d2d; border-radius: 6px; padding: 8px;");
+            QVBoxLayout* col = new QVBoxLayout(card);
+            col->setSpacing(6);
+            col->setContentsMargins(10, 10, 10, 10);
+
+            QLabel* nameLabel = new QLabel(
+                QString("Player %1: %2").arg(pi.id).arg(pi.name));
+            nameLabel->setAlignment(Qt::AlignCenter);
+            QFont f = nameLabel->font();
+            f.setBold(true);
+            f.setPointSize(10);
+            nameLabel->setFont(f);
+            nameLabel->setStyleSheet("color: #fff;");
+
+            QLabel* imgLabel = new QLabel();
+            imgLabel->setPixmap(
+                pi.pixmap.scaled(400, 300, Qt::KeepAspectRatio,
+                                          Qt::SmoothTransformation));
+            imgLabel->setAlignment(Qt::AlignCenter);
+            imgLabel->setStyleSheet(
+                "border: 2px solid #555; background: white;");
+
+            col->addWidget(nameLabel);
+            col->addWidget(imgLabel);
+            layout->addWidget(card);
+        }
+        layout->addStretch();
+    }
+}
+
+void MainWindow::onViewDrawingsClicked()
+{
+    if (logStack->currentIndex() == 1)
+    {
+        logStack->setCurrentIndex(0);
+        viewDrawingsButton->setText("View Drawings");
+    }
+    else
+    {
+        rebuildImagePanel();
+        logStack->setCurrentIndex(1);
+        viewDrawingsButton->setText("Back to Log");
+    }
 }
 
 void MainWindow::loadLogFile()

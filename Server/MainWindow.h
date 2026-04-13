@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 #include <QObject>
+#include <QPixmap>
+#include <QVector>
 
 class QLabel;
 class QListWidget;
@@ -9,6 +11,9 @@ class QPlainTextEdit;
 class QPushButton;
 class QSpinBox;
 class QThread;
+class QStackedWidget;
+class QScrollArea;
+class QWidget;
 
 class ServerWorker : public QObject
 {
@@ -28,6 +33,11 @@ signals:
     void serverStarted();
     void serverStopped();
     void serverError(const QString& text);
+
+    // Emitted when a player's raw GL_RGB image is received from the client.
+    // pixels: GL_RGB / GL_UNSIGNED_BYTE data, bottom-to-top row order.
+    void imageReceived(int playerId, const QString& playerName,
+                       const QByteArray& pixels, int width, int height);
 };
 
 class MainWindow : public QMainWindow
@@ -41,6 +51,7 @@ public:
 private slots:
     void onStartClicked();
     void onRefreshLogsClicked();
+    void onViewDrawingsClicked();
 
     void onServerStarted();
     void onServerStopped();
@@ -51,10 +62,16 @@ private slots:
     void addPlayer(const QString& name);
     void clearPlayers();
 
+    // Receives a raw OpenGL image from the worker thread,
+    // flips it vertically, and stores it as a QPixmap.
+    void storeImage(int playerId, const QString& playerName,
+                    const QByteArray& pixels, int width, int height);
+
 private:
     void setupUi();
     void setupConnections();
     void loadLogFile();
+    void rebuildImagePanel();   // repopulates imageContainer with stored images
 
 private:
     QLabel* serverStatusLabel;
@@ -66,10 +83,23 @@ private:
     QListWidget* playersList;
     QPlainTextEdit* logsView;
 
+    // Right-panel stack: page 0 = log, page 1 = image gallery
+    QStackedWidget* logStack;
+    QWidget*        imageContainer; // lives inside the scroll area on page 1
+
     QPushButton* startButton;
     QPushButton* refreshLogsButton;
+    QPushButton* viewDrawingsButton;
     QPushButton* quitButton;
 
-    QThread* workerThread;
+    QThread*      workerThread;
     ServerWorker* worker;
+
+    // Received player drawings (converted from raw GL pixels)
+    struct PlayerImage {
+        int     id;
+        QString name;
+        QPixmap pixmap;
+    };
+    QVector<PlayerImage> storedImages;
 };

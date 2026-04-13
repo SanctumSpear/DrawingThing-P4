@@ -1,1 +1,374 @@
-
+[Sat Apr 11 23:33:18 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sat Apr 11 23:33:18 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sat Apr 11 23:33:24 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sat Apr 11 23:33:24 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sat Apr 11 23:33:24 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 17:13:02 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 17:13:02 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt to Alice
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 16 bytes
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 17:13:13 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 17:14:09 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 17:14:09 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 17:14:16 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 17:14:16 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 17:14:16 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 17:14:16 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 17:14:16 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 17:14:16 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt to Alice
+[Sun Apr 12 17:14:16 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 17:14:16 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 17:14:16 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 17:15:03 2026] [SID:1] [ERR] SR_JPEG : Server received JPEG | 1440000 bytes
+[Sun Apr 12 17:15:03 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 17:15:03 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 17:15:03 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 17:19:18 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 17:19:18 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 17:19:19 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 17:19:19 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 17:19:19 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 17:19:19 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 17:19:19 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 17:19:19 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt to Alice
+[Sun Apr 12 17:19:19 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 17:19:19 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 17:19:19 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 17:19:30 2026] [SID:1] [ERR] SR_JPEG : Server received JPEG | 1440000 bytes
+[Sun Apr 12 17:19:30 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 17:19:30 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 17:19:30 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 17:55:44 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 17:55:44 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 17:55:51 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 17:55:51 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 17:55:51 2026] [SID:1] [ERR] SL_LOGIN : Login: Rami
+[Sun Apr 12 18:01:11 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 18:01:11 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:01:15 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 18:01:15 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 18:01:15 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 18:01:15 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:01:15 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 18:01:15 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 18:01:15 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:01:15 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 18:01:15 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 18:01:24 2026] [SID:1] [ERR] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 18:01:24 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 18:01:24 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 18:01:24 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 18:01:30 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:01:30 2026] [SID:1] [OK ] SS_SEND : Server sent data | RESULTS broadcast
+[Sun Apr 12 18:01:30 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 18:01:30 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 18:01:30 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 18:03:57 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 18:03:57 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:04:02 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 18:04:02 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 18:04:02 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 18:04:02 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:04:02 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 18:04:02 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 18:04:02 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:04:02 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 18:04:02 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 18:04:08 2026] [SID:1] [ERR] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 18:04:08 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 18:04:08 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 18:04:08 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 18:04:13 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:04:13 2026] [SID:1] [OK ] SS_SEND : Server sent data | RESULTS broadcast
+[Sun Apr 12 18:04:13 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 18:04:13 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 18:04:13 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 18:07:46 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 18:07:46 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:07:56 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 18:07:56 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 18:07:56 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 18:07:56 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:07:56 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 18:07:56 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 18:07:56 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:07:56 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 18:07:56 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 18:08:08 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 18:08:08 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 18:08:08 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 18:08:08 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 18:08:09 2026] [SID:1] [ERR] SR_RECV : Server received data | Alice self-vote rejected
+[Sun Apr 12 18:08:09 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:08:09 2026] [SID:1] [OK ] SS_SEND : Server sent data | RESULTS broadcast
+[Sun Apr 12 18:08:09 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 18:08:09 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 18:08:09 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 18:42:31 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 18:42:31 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 18:42:44 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 18:43:33 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 18:43:33 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 18:43:33 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 18:43:34 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 18:50:56 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 18:50:56 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:51:07 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 18:51:07 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 18:51:07 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 1
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 1
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SL_LOGIN : Login: Bob
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Bob
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Bob
+[Sun Apr 12 18:51:27 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Bob
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Bob
+[Sun Apr 12 18:51:48 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SR_RECV : Server received data | Alice voted for player 2
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SR_RECV : Server received data | Bob voted for player 1
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SS_SEND : Server sent data | awarded 100 pts to player 1
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SS_SEND : Server sent data | RESULTS broadcast
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 18:52:05 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Bob
+[Sun Apr 12 19:53:27 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 19:53:27 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 19:54:21 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 19:54:21 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 19:54:26 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 19:54:26 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 19:54:26 2026] [SID:1] [OK ] SL_LOGIN : Login: Bob
+[Sun Apr 12 19:54:26 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 19:54:26 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 19:54:26 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Bob
+[Sun Apr 12 19:54:26 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 19:54:26 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Bob
+[Sun Apr 12 19:54:26 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 19:54:32 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Bob
+[Sun Apr 12 19:54:32 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 19:54:32 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Bob
+[Sun Apr 12 19:54:32 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 19:54:54 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 19:54:54 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 19:54:56 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 19:54:56 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 19:54:56 2026] [SID:1] [OK ] SL_LOGIN : Login: Bob
+[Sun Apr 12 19:57:09 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 19:57:09 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 19:57:15 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 19:57:15 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 19:57:15 2026] [SID:1] [OK ] SL_LOGIN : Login: Bob
+[Sun Apr 12 20:09:03 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 20:09:03 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:09:07 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 20:09:07 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 20:09:07 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 20:16:17 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 20:16:17 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:16:22 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 20:16:22 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 20:16:22 2026] [SID:1] [OK ] SL_LOGIN : Login: Bob
+[Sun Apr 12 20:45:19 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 20:45:19 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:45:29 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 20:45:29 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 20:45:29 2026] [SID:1] [OK ] SL_LOGIN : Login: Bob
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 1
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 1
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Bob
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Bob
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 20:45:46 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 20:45:53 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Bob
+[Sun Apr 12 20:45:53 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 20:45:53 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 20:45:53 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Bob
+[Sun Apr 12 20:45:53 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 20:45:53 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 20:46:14 2026] [SID:1] [OK ] SR_RECV : Server received data | Bob voted for player 2
+[Sun Apr 12 20:46:14 2026] [SID:1] [OK ] SR_RECV : Server received data | Alice voted for player 1
+[Sun Apr 12 20:46:14 2026] [SID:1] [OK ] SS_SEND : Server sent data | awarded 100 pts to player 1
+[Sun Apr 12 20:46:14 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 20:46:14 2026] [SID:1] [OK ] SS_SEND : Server sent data | RESULTS broadcast
+[Sun Apr 12 20:46:14 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 20:46:14 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 20:46:14 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Bob
+[Sun Apr 12 20:46:14 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 20:51:38 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 20:51:38 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:51:59 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 20:51:59 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 20:51:59 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 20:52:13 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 1
+[Sun Apr 12 20:52:13 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 1
+[Sun Apr 12 20:52:13 2026] [SID:1] [OK ] SL_LOGIN : Login: Bob
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 2
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 2
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SL_LOGIN : Login: Joe
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Bob
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Joe
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Bob
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Joe
+[Sun Apr 12 20:52:25 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 20:52:36 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 20:52:36 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Bob
+[Sun Apr 12 20:52:36 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Joe
+[Sun Apr 12 20:52:36 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 20:52:36 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 20:52:36 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Bob
+[Sun Apr 12 20:52:36 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Joe
+[Sun Apr 12 20:52:36 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SR_RECV : Server received data | Alice voted for player 2
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SR_RECV : Server received data | Bob voted for player 1
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SR_RECV : Server received data | Joe voted for player 1
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SS_SEND : Server sent data | awarded 100 pts to player 1
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SS_SEND : Server sent data | RESULTS broadcast
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SC_XSTATE : State -> ENDING
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_END broadcast
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Alice
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Bob
+[Sun Apr 12 20:53:02 2026] [SID:1] [OK ] SC_DISCONNECT : Client disconnected | Joe
+[Sun Apr 12 20:56:23 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 20:56:23 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:56:28 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 20:56:28 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 20:56:28 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 20:56:28 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 20:56:28 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 20:56:28 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 20:56:28 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:56:28 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 20:56:28 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 20:56:32 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 20:56:32 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 20:56:32 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 20:56:32 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 20:58:13 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 20:58:13 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:58:20 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 20:58:20 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 20:58:20 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 20:58:20 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 20:58:20 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 20:58:20 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 20:58:20 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 20:58:20 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 20:58:20 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 20:58:29 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 20:58:29 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 20:58:29 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 20:58:29 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 21:00:16 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 21:00:16 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:00:20 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 21:00:20 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 21:00:20 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 21:00:20 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 21:00:20 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 21:00:20 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 21:00:20 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:00:20 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 21:00:20 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 21:00:25 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 21:00:25 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 21:00:25 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 21:00:25 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 21:01:35 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 21:01:35 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:01:39 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 21:01:39 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 21:01:39 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 21:01:39 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 21:01:39 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 21:01:39 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 21:01:39 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:01:39 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 21:01:39 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 21:16:35 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 21:16:35 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | selected prompt: A wizard casting a spell at a vending machine
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 21:16:40 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 21:17:01 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 21:17:01 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 21:17:01 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 21:17:01 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 21:20:16 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 21:20:16 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | selected prompt: A dinosaur using a smartphone
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 21:20:21 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 21:21:22 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 21:21:22 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 21:21:22 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 21:21:22 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
+[Sun Apr 12 21:30:27 2026] [SID:1] [OK ] SC_XSTATE : State -> STARTUP
+[Sun Apr 12 21:30:27 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SC_CONNECT : Client connected | socket 0
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SR_RECV : Server received data | credentials from socket 0
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SL_LOGIN : Login: Alice
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SC_XSTATE : State -> SENDING
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SS_SEND : Server sent data | GAME_START broadcast
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | selected prompt: A pirate discovering a treasure chest full of socks
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SS_PRMT : Server sent prompt | prompt -> Alice
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SC_XSTATE : State -> WAITING
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SR_RECV : Server received data | ACK from Alice
+[Sun Apr 12 21:30:35 2026] [SID:1] [OK ] SC_XSTATE : State -> RECEIVING
+[Sun Apr 12 21:30:39 2026] [SID:1] [OK ] SR_JPEG : Server received JPEG | 1440000 bytes from Alice
+[Sun Apr 12 21:30:39 2026] [SID:1] [OK ] SC_XSTATE : State -> VOTING
+[Sun Apr 12 21:30:39 2026] [SID:1] [OK ] SS_JPEG : Server sent JPEG | broadcast drawing from Alice
+[Sun Apr 12 21:30:39 2026] [SID:1] [OK ] SS_SEND : Server sent data | VOTE_REQUEST broadcast
