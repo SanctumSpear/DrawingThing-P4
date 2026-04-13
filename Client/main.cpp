@@ -34,7 +34,8 @@ std::vector<unsigned char> runCanvas(const std::string& prompt) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    std::string title = "Draw: " + prompt + "  |  ENTER to submit  |  C to clear";
+    std::string title = "Draw: " + prompt +
+        "  |  1-8: colors  |  8: eraser  |  C: clear  |  ENTER: submit";
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, title.c_str(), nullptr, nullptr);
     if (!window) { glfwTerminate(); return {}; }
     glfwMakeContextCurrent(window);

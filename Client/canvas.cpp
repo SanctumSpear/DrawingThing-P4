@@ -1,7 +1,8 @@
 #include "Canvas.h"
 #include <iostream>
 
-Canvas::Canvas(int width, int height, float timeLimitSeconds, std::function<void(std::vector<unsigned char>)> onSubmit)
+Canvas::Canvas(int width, int height, float timeLimitSeconds,
+    std::function<void(std::vector<unsigned char>)> onSubmit)
     : width(width), height(height), timeLimit(timeLimitSeconds),
     timeRemaining(timeLimitSeconds), onSubmit(onSubmit), done(false) {
 
@@ -19,9 +20,8 @@ void Canvas::Update() {
     if (done) return;
 
     double now = glfwGetTime();
-    float delta = (float)(now - lastFrameTime);
+    float  delta = (float)(now - lastFrameTime);
     lastFrameTime = now;
-
     timeRemaining -= delta;
 
     if (timeRemaining <= 0.0f) {
@@ -36,34 +36,37 @@ void Canvas::Draw() {
     glBindVertexArray(VAO);
     glLineWidth(3.0f);
 
-    for (const auto& stroke : strokes)
-        UploadAndDraw(stroke);
+    // Draw all completed strokes using their locked-in color
+    for (const auto& stroke : strokes) {
+        shader.SetColor(stroke.r, stroke.g, stroke.b);
+        UploadAndDraw(stroke.points);
+    }
 
-    if (currentStroke.size() >= 2)
+    // Draw current in-progress stroke using color locked at press time
+    if (currentStroke.size() >= 2) {
+        shader.SetColor(strokeR, strokeG, strokeB);
         UploadAndDraw(currentStroke);
+    }
 
+    // Timer bar always black
+    shader.SetColor(0.0f, 0.0f, 0.0f);
     DrawTimerBar();
+
+    // Reset shader back to active color for next frame
+    shader.SetColor(r, g, b);
 }
 
-// Draws a colored bar at the top of the screen showing time remaining
-// Green -> Yellow -> Red as time runs out
 void Canvas::DrawTimerBar() {
     float ratio = timeRemaining / timeLimit;
-
-    // Bar goes from -1 to (ratio * 2 - 1) across the top
     float barRight = ratio * 2.0f - 1.0f;
     float barTop = 0.95f;
     float barBot = 0.88f;
 
-    // Color: green when full, red when empty
-    // We do this by drawing with a simple colored quad
-    // For simplicity we use the same shader but change clear color trick
-    // A proper solution would pass color as uniform — fine to upgrade later
     std::vector<Point> bar = {
-        { -1.0f, barTop },
+        { -1.0f,    barTop },
         { barRight, barTop },
         { barRight, barBot },
-        { -1.0f, barBot }
+        { -1.0f,    barBot }
     };
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -86,9 +89,8 @@ void Canvas::Submit() {
     if (done) return;
     done = true;
 
-    // Finish any stroke in progress
     if (!currentStroke.empty())
-        strokes.push_back(currentStroke);
+        strokes.push_back({ currentStroke, strokeR, strokeG, strokeB });
 
     std::cout << "Exporting drawing...\n";
     std::vector<unsigned char> pixels = ExportPixels();
@@ -103,17 +105,27 @@ std::vector<unsigned char> Canvas::ExportPixels() {
     return pixels;
 }
 
+void Canvas::SetColor(float r, float g, float b) {
+    this->r = r;
+    this->g = g;
+    this->b = b;
+}
+
 void Canvas::OnMouseButton(int button, int action) {
     if (done) return;
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
         if (action == GLFW_PRESS) {
             mouseDown = true;
             currentStroke.clear();
+            // Lock color at the moment drawing starts
+            strokeR = r;
+            strokeG = g;
+            strokeB = b;
         }
         else if (action == GLFW_RELEASE) {
             mouseDown = false;
             if (!currentStroke.empty())
-                strokes.push_back(currentStroke);
+                strokes.push_back({ currentStroke, strokeR, strokeG, strokeB });
         }
     }
 }
@@ -126,12 +138,18 @@ void Canvas::OnMouseMove(double mx, double my) {
 
 void Canvas::OnKeyPress(int key, int action) {
     if (action != GLFW_PRESS) return;
-    if (key == GLFW_KEY_C)
-        Clear();
-    if (key == GLFW_KEY_ENTER || key == GLFW_KEY_SPACE) {
-        std::cout << "Player submitted drawing.\n";
-        Submit();
-    }
+
+    if (key == GLFW_KEY_C)                              Clear();
+    if (key == GLFW_KEY_ENTER || key == GLFW_KEY_SPACE) Submit();
+
+    if (key == GLFW_KEY_1) SetColor(0.0f, 0.0f, 0.0f); // black
+    if (key == GLFW_KEY_2) SetColor(1.0f, 0.0f, 0.0f); // red
+    if (key == GLFW_KEY_3) SetColor(0.0f, 0.8f, 0.0f); // green
+    if (key == GLFW_KEY_4) SetColor(0.0f, 0.4f, 1.0f); // blue
+    if (key == GLFW_KEY_5) SetColor(1.0f, 0.6f, 0.0f); // orange
+    if (key == GLFW_KEY_6) SetColor(0.6f, 0.0f, 0.8f); // purple
+    if (key == GLFW_KEY_7) SetColor(1.0f, 1.0f, 0.0f); // yellow
+    if (key == GLFW_KEY_8) SetColor(1.0f, 1.0f, 1.0f); // white eraser
 }
 
 Point Canvas::ToNDC(double mx, double my) {

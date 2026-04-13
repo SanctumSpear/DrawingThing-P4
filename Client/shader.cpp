@@ -12,8 +12,9 @@ const char* vertexShaderSrc = R"(
 const char* fragmentShaderSrc = R"(
     #version 330 core
     out vec4 FragColor;
+    uniform vec3 uColor;
     void main() {
-        FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        FragColor = vec4(uColor, 1.0);
     }
 )";
 
@@ -36,6 +37,12 @@ Shader::~Shader() {
 
 void Shader::Use() {
     glUseProgram(programID);
+}
+
+void Shader::SetColor(float r, float g, float b) {
+    glUseProgram(programID);
+    int location = glGetUniformLocation(programID, "uColor");
+    glUniform3f(location, r, g, b);
 }
 
 unsigned int Shader::CompileShader(unsigned int type, const char* src) {

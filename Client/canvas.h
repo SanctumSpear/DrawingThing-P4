@@ -9,16 +9,14 @@ struct Point { float x, y; };
 
 class Canvas {
 public:
-    // onSubmit is called when user submits or timer runs out
-    // passes the raw pixel data back to whoever created the Canvas
     Canvas(int width, int height, float timeLimitSeconds, std::function<void(std::vector<unsigned char>)> onSubmit);
     ~Canvas();
 
     void Draw();
     void Clear();
-    void Update(); // call every frame — handles timer
-
-    bool IsDone(); // returns true when drawing is submitted
+    void Update();
+    void SetColor(float r, float g, float b);
+    bool IsDone();
 
     void OnMouseButton(int button, int action);
     void OnMouseMove(double mx, double my);
@@ -29,13 +27,24 @@ private:
     unsigned int VAO, VBO;
     Shader shader;
 
-    std::vector<std::vector<Point>> strokes;
-    std::vector<Point> currentStroke;
+    struct Stroke {
+        std::vector<Point> points;
+        float r, g, b;
+    };
+
+    std::vector<Stroke> strokes;
+    std::vector<Point>  currentStroke;
     bool mouseDown = false;
     bool done = false;
 
-    float timeLimit;
-    float timeRemaining;
+    // Active color (changes when user picks a color)
+    float r = 0.0f, g = 0.0f, b = 0.0f;
+
+    // Color locked in at the moment mouse is pressed
+    float strokeR = 0.0f, strokeG = 0.0f, strokeB = 0.0f;
+
+    float  timeLimit;
+    float  timeRemaining;
     double lastFrameTime;
 
     std::function<void(std::vector<unsigned char>)> onSubmit;
