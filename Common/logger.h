@@ -1,3 +1,9 @@
+/**
+ * @file logger.h
+ * @brief Defines logging codes and a simple logger class for recording client, server,
+ *        authentication, and game state events.
+ */
+
 #pragma once
 #include <string>
 #include <fstream>

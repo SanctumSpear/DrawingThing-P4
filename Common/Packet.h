@@ -1,3 +1,9 @@
+/**
+ * @file Packet.h
+ * @brief Defines packet types, packet headers, and packet serialization/deserialization helpers
+ *        for communication between the client and server.
+ */
+
 #pragma once
 #include <iostream>
 #include <string>

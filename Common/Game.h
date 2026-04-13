@@ -1,3 +1,9 @@
+/**
+ * @file Game.h
+ * @brief Defines the Player and Game classes used to manage game sessions, players,
+ *        prompts, drawings, voting, and score tracking.
+ */
+
 #pragma once
 
 #include <iostream>
