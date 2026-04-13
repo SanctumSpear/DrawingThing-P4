@@ -12,12 +12,7 @@
 #include <QPushButton>
 #include <QFormLayout>
 #include <QScrollArea>
-#include <QDateTime>
-#include <QFile>
-#include <QTextStream>
 #include <QFont>
-#include <fstream>
-#include <iostream>
 
 // -------------------------------------------------------
 // LoginPage
@@ -80,7 +75,12 @@ void LoginPage::onRegisterClicked() {
         statusLabel->setText("Username and password required.");
         return;
     }
-    emit registerRequested(usernameEdit->text(), passwordEdit->text());
+    statusLabel->setText("Registering...");
+    emit registerRequested(
+        ipEdit->text(),
+        portEdit->text().toInt(),
+        usernameEdit->text(),
+        passwordEdit->text());
 }
 
 // -------------------------------------------------------
@@ -248,6 +248,10 @@ ClientWindow::ClientWindow(QWidget* parent)
         this, &ClientWindow::onLoginFailed, Qt::QueuedConnection);
     connect(worker, &ClientWorker::loginSuccess,
         this, &ClientWindow::onLoginSuccess, Qt::QueuedConnection);
+    connect(worker, &ClientWorker::registerSuccess,
+        this, &ClientWindow::onRegisterSuccess, Qt::QueuedConnection);
+    connect(worker, &ClientWorker::registerFailed,
+        this, &ClientWindow::onRegisterFailed, Qt::QueuedConnection);
     connect(worker, &ClientWorker::gameStarted,
         this, &ClientWindow::onGameStarted, Qt::QueuedConnection);
     connect(worker, &ClientWorker::promptReceived,
@@ -284,16 +288,23 @@ void ClientWindow::onLoginRequested(QString ip, int port,
         Q_ARG(QString, password));
 }
 
-void ClientWindow::onRegisterRequested(QString username, QString password) {
-    std::ofstream file("accounts.txt", std::ios::app);
-    if (!file.is_open()) {
-        QMessageBox::warning(this, "Error", "Could not open accounts.txt");
-        return;
-    }
-    file << username.toStdString() << ":" << password.toStdString() << "\n";
-    file.close();
+void ClientWindow::onRegisterRequested(QString ip, int port,
+    QString username, QString password) {
+    QMetaObject::invokeMethod(worker, "registerAccount",
+        Qt::QueuedConnection,
+        Q_ARG(QString, ip),
+        Q_ARG(int,     port),
+        Q_ARG(QString, username),
+        Q_ARG(QString, password));
+}
+
+void ClientWindow::onRegisterSuccess(const QString& username) {
     QMessageBox::information(this, "Registered",
-        "Account created for " + username + ".\nYou can now log in.");
+        "Account created for \"" + username + "\".\nYou can now log in.");
+}
+
+void ClientWindow::onRegisterFailed(const QString& reason) {
+    QMessageBox::warning(this, "Registration Failed", reason);
 }
 
 void ClientWindow::onLoginFailed(const QString& reason) {
@@ -355,4 +366,4 @@ void ClientWindow::onGameEnded() {}
 void ClientWindow::onError(const QString& msg) {
     QMessageBox::critical(this, "Error", msg);
     stack->setCurrentIndex(0);
-}
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    

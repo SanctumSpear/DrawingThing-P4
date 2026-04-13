@@ -28,7 +28,6 @@ void ClientWorker::connectAndRun(QString ip, int port, QString username, QString
         if (::connect(serverSocket, (sockaddr*)&hint, sizeof(hint)) == SOCKET_ERROR)
             throw std::runtime_error("Failed to connect to server.");
 
-        connected = true;
         emit logMessage("Connected to server.");
 
         // Authenticate
@@ -153,6 +152,64 @@ void ClientWorker::connectAndRun(QString ip, int port, QString username, QString
     }
 }
 
+void ClientWorker::registerAccount(QString ip, int port,
+    QString username, QString password)
+{
+    // Use a dedicated short-lived socket so this doesn't touch serverSocket,
+    // which is reserved for the full game session in connectAndRun().
+    WSADATA regWsa;
+    SOCKET  regSock = INVALID_SOCKET;
+
+    try {
+        if (WSAStartup(MAKEWORD(2, 2), &regWsa) != 0)
+            throw std::runtime_error("WSAStartup failed.");
+
+        regSock = socket(AF_INET, SOCK_STREAM, 0);
+        if (regSock == INVALID_SOCKET)
+            throw std::runtime_error("Socket creation failed.");
+
+        sockaddr_in hint{};
+        hint.sin_family = AF_INET;
+        hint.sin_port   = htons(port);
+        inet_pton(AF_INET, ip.toStdString().c_str(), &hint.sin_addr);
+
+        if (::connect(regSock, (sockaddr*)&hint, sizeof(hint)) == SOCKET_ERROR)
+            throw std::runtime_error("Failed to connect to server.");
+
+        // Send "REGISTER:username:password" — the server strips the prefix and
+        // calls AccountManager::CreateAccount() before closing the connection.
+        std::string creds = "REGISTER:" + username.toStdString()
+                          + ":" + password.toStdString();
+        send(regSock, creds.c_str(), (int)(creds.size() + 1), 0);
+
+        // Receive the length-prefixed response packet
+        uint32_t totalSize = 0;
+        recv(regSock, (char*)&totalSize, sizeof(uint32_t), 0);
+        char* buf = new char[totalSize];
+        int received = 0;
+        while (received < (int)totalSize) {
+            int r = recv(regSock, buf + received, (int)totalSize - received, 0);
+            if (r <= 0) { delete[] buf; throw std::runtime_error("Connection closed during registration."); }
+            received += r;
+        }
+        Packet resp = Packet::Deserialize(buf, totalSize);
+        delete[] buf;
+
+        closesocket(regSock);
+        WSACleanup();
+
+        if (resp.header.type == PacketType::ACK)
+            emit registerSuccess(username);
+        else
+            emit registerFailed("Registration failed: username may already be taken.");
+    }
+    catch (const std::exception& e) {
+        if (regSock != INVALID_SOCKET) closesocket(regSock);
+        WSACleanup();
+        emit registerFailed(QString("Error: %1").arg(e.what()));
+    }
+}
+
 void ClientWorker::sendVote(int votedPlayerId) {
     pendingVote = votedPlayerId;
     voteReady = true;
@@ -201,4 +258,4 @@ Packet ClientWorker::receivePacket() {
 
 void ClientWorker::sendString(const std::string& str) {
     send(serverSocket, str.c_str(), (int)(str.size() + 1), 0);
-}
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
