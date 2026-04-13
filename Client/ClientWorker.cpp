@@ -89,6 +89,8 @@ void ClientWorker::connectAndRun(QString ip, int port, QString username, QString
         emit logMessage("Waiting for drawings from server...");
         while (true) {
             Packet pkt = receivePacket();
+            std::cout << "Received packet type: " << (int)pkt.header.type << "\n";
+            std::cout << "From player: " << (int)pkt.header.srcAddress << "\n";
 
             if (pkt.header.type == PacketType::IMAGE) {
                 int drawerId = (int)pkt.header.srcAddress;
@@ -104,6 +106,9 @@ void ClientWorker::connectAndRun(QString ip, int port, QString username, QString
                 break;
             }
             else {
+                // This is the problem — something unexpected is breaking the loop
+                std::cout << "Unexpected packet type: " << (int)pkt.header.type
+                    << " breaking out of loop early!\n";
                 break;
             }
         }
@@ -175,8 +180,20 @@ void ClientWorker::sendPacket(const Packet& pkt) {
 Packet ClientWorker::receivePacket() {
     uint32_t totalSize = 0;
     recv(serverSocket, (char*)&totalSize, sizeof(uint32_t), 0);
+
     char* buf = new char[totalSize];
-    recv(serverSocket, buf, (int)totalSize, 0);
+    int totalReceived = 0;
+    while (totalReceived < (int)totalSize) {
+        int r = recv(serverSocket,
+            buf + totalReceived,
+            (int)totalSize - totalReceived, 0);
+        if (r <= 0) {
+            delete[] buf;
+            throw std::runtime_error("receivePacket failed mid-receive.");
+        }
+        totalReceived += r;
+    }
+
     Packet p = Packet::Deserialize(buf, totalSize);
     delete[] buf;
     return p;

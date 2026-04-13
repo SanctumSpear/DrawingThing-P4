@@ -7,14 +7,11 @@
 #include "../Common/Game.h"
 #include "../Common/Packet.h"
 
-// Server: manages one listening socket and a vector of client sockets,
-// one per connected player. Covers REQ-INT-010 (multiple simultaneous clients).
-
 class Server {
 private:
     WSADATA              data;
     SOCKET               serverSocket;
-    std::vector<SOCKET>  clientSockets; // index 0 = first player, etc.
+    std::vector<SOCKET>  clientSockets;
 
     static bool RecvAll(SOCKET sock, char* buf, int len) {
         int total = 0;
@@ -26,17 +23,36 @@ private:
         return true;
     }
 
-    // Shared send/receive helpers that work on any SOCKET
+    static bool SendAll(SOCKET sock, const char* buf, int len) {
+        int total = 0;
+        while (total < len) {
+            int sent = send(sock, buf + total, len - total, 0);
+            if (sent == SOCKET_ERROR) return false;
+            total += sent;
+        }
+        return true;
+    }
+
     void RawSendPacket(SOCKET sock, const Packet& packet) {
         uint32_t totalSize = 0;
         char* buf = packet.Serialize(totalSize);
-        send(sock, (char*)&totalSize, sizeof(uint32_t), 0);
-        send(sock, buf, (int)totalSize, 0);
+
+        // Send size prefix
+        if (!SendAll(sock, (char*)&totalSize, sizeof(uint32_t))) {
+            delete[] buf;
+            throw std::runtime_error("RawSendPacket: failed sending size prefix.");
+        }
+
+        // Send full payload in chunks
+        if (!SendAll(sock, buf, (int)totalSize)) {
+            delete[] buf;
+            throw std::runtime_error("RawSendPacket: failed sending payload.");
+        }
+
         delete[] buf;
     }
 
     Packet RawReceivePacket(SOCKET sock) {
-        // Step 1: read the 4-byte size prefix reliably
         uint32_t totalSize = 0;
         if (!RecvAll(sock, (char*)&totalSize, sizeof(uint32_t)))
             throw std::runtime_error("RawReceivePacket: connection closed reading size prefix.");
@@ -44,7 +60,6 @@ private:
         if (totalSize < sizeof(PacketHeader) || totalSize > 10 * 1024 * 1024)
             throw std::runtime_error("RawReceivePacket: invalid packet size (" + std::to_string(totalSize) + ").");
 
-        // Step 2: read the full packet payload reliably
         char* buf = new char[totalSize];
         ZeroMemory(buf, totalSize);
         if (!RecvAll(sock, buf, (int)totalSize)) {
@@ -69,7 +84,6 @@ private:
     }
 
 public:
-    // Initialises Winsock and starts listening on the given port
     Server(int port) {
         if (WSAStartup(MAKEWORD(2, 2), &data) != 0)
             throw std::runtime_error("WSAStartup failed.");
@@ -81,16 +95,14 @@ public:
         }
 
         sockaddr_in hint{};
-        hint.sin_family           = AF_INET;
-        hint.sin_port             = htons(port);
+        hint.sin_family = AF_INET;
+        hint.sin_port = htons(port);
         hint.sin_addr.S_un.S_addr = INADDR_ANY;
 
         bind(serverSocket, (sockaddr*)&hint, sizeof(hint));
         listen(serverSocket, SOMAXCONN);
     }
 
-    // Blocks until one client connects; adds it to clientSockets.
-    // Returns the index of the new client (use with all per-client methods).
     int AcceptClient() {
         SOCKET sock = accept(serverSocket, nullptr, nullptr);
         clientSockets.push_back(sock);
@@ -98,8 +110,6 @@ public:
     }
 
     int GetClientCount() const { return (int)clientSockets.size(); }
-
-    // --- Directed: send/receive to/from one specific client ---
 
     void SendPacket(int clientIdx, const Packet& packet) {
         RawSendPacket(clientSockets.at(clientIdx), packet);
@@ -117,7 +127,6 @@ public:
         return RawReceiveString(clientSockets.at(clientIdx));
     }
 
-    // --- Broadcast: send the same packet to every connected client ---
     void BroadcastPacket(const Packet& packet) {
         for (auto& sock : clientSockets)
             RawSendPacket(sock, packet);
@@ -128,14 +137,12 @@ public:
             RawSendString(sock, msg);
     }
 
-    // Remove a client (e.g. failed auth) and close its socket
     void CloseClient(int clientIdx) {
         if (clientIdx < 0 || clientIdx >= (int)clientSockets.size()) return;
         closesocket(clientSockets[clientIdx]);
         clientSockets.erase(clientSockets.begin() + clientIdx);
     }
 
-    // Close everything
     void Cleanup() {
         for (auto& sock : clientSockets)
             closesocket(sock);
