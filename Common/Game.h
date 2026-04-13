@@ -90,6 +90,19 @@ public:
         }
     }
 
+    // Award 'pointsPerVote' to every player for each vote they received.
+    // Returns the winner's player ID (most votes), or -1 if no votes were cast.
+    int AwardVotePoints(int pointsPerVote) {
+        std::map<int, int> tally;
+        for (const auto& kv : playerVotes)
+            tally[kv.second]++;
+
+        for (const auto& kv : tally)
+            AwardPoints(kv.first, kv.second * pointsPerVote);
+
+        return GetWinnerId();
+    }
+
     void PrintPlayers() const {
         std::cout << "=== Session " << (int)sessionID << " Players ===\n";
         for (const auto& p : players)

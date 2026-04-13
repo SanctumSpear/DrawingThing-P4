@@ -19,6 +19,9 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <random>
+#include <fstream>
 
 #include "Communication.h"
 #include "AccountManager.h"
@@ -154,7 +157,31 @@ void ServerWorker::runServer(int maxPlayers)
         emit logMessage("GAME_START broadcast.");
         log.Log(SS_SEND, game.GetSessionID(), true, "GAME_START broadcast");
 
-        game.SetPrompt("A cat riding a bicycle");
+        std::vector<std::string> PROMPTS;
+        {
+            std::ifstream promptFile("prompts.txt");
+            if (promptFile.is_open())
+            {
+                std::string line;
+                while (std::getline(promptFile, line))
+                    if (!line.empty())
+                        PROMPTS.push_back(line);
+            }
+            if (PROMPTS.empty())
+            {
+                emit logMessage("[WARN] prompts.txt not found or empty — using fallback prompt.");
+                PROMPTS.push_back("A Dog riding a unicycle");
+            }
+        }
+
+        std::mt19937 rng(std::random_device{}());
+        std::uniform_int_distribution<size_t> dist(0, PROMPTS.size() - 1);
+        game.SetPrompt(PROMPTS[dist(rng)]);
+
+        emit logMessage(QString("Prompt selected: \"%1\"")
+            .arg(QString::fromStdString(game.GetPrompt())));
+        log.Log(SS_PRMT, game.GetSessionID(), true,
+            "selected prompt: " + game.GetPrompt());
 
         for (int i = 0; i < game.GetPlayerCount(); i++)
         {
@@ -314,17 +341,20 @@ void ServerWorker::runServer(int maxPlayers)
             }
         }
 
-        int winnerId = game.GetWinnerId();
+        // Award 50 points per vote received to every player, then identify winner.
+        int winnerId = game.AwardVotePoints(50);
         if (winnerId != -1)
         {
-            game.AwardPoints(winnerId, 100);
-            std::cout << "\nWinner: Player " << winnerId << " gets 100 points!\n";
+            const Player* winner = game.FindPlayerById(winnerId);
+            std::string winnerName = winner ? winner->GetName() : "Player " + std::to_string(winnerId);
 
-            emit logMessage(QString("Winner: Player %1 gets 100 points!")
-                .arg(winnerId));
+            std::cout << "\nWinner: " << winnerName << " had the most votes!\n";
+
+            emit logMessage(QString("Winner: %1 had the most votes!")
+                .arg(QString::fromStdString(winnerName)));
 
             log.Log(SS_SEND, game.GetSessionID(), true,
-                "awarded 100 pts to player " + std::to_string(winnerId));
+                "awarded vote-based points; winner: " + winnerName);
         }
         else
         {
