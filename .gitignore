@@ -365,4 +365,5 @@ FodyWeavers.xsd
 # Allow glfw3.dll in Graphics/bin
 !Graphics/bin/
 !Graphics/bin/glfw3.dll
-Server/server_log.txt
+
+server_log.txt
